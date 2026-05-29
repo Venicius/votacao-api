@@ -1,0 +1,32 @@
+package br.com.sicredi.votacao.application.usecase;
+
+import br.com.sicredi.votacao.application.ports.in.RegistrarVotoCommand;
+import br.com.sicredi.votacao.application.ports.in.RegistrarVotoUseCase;
+import br.com.sicredi.votacao.application.ports.out.SessaoRepositoryPort;
+import br.com.sicredi.votacao.domain.exception.DomainBusinessException;
+import br.com.sicredi.votacao.domain.model.Associado;
+import br.com.sicredi.votacao.domain.model.SessaoVotacao;
+import br.com.sicredi.votacao.domain.model.Voto;
+
+public class RegistrarVotoUseCaseImpl implements RegistrarVotoUseCase {
+
+    private final SessaoRepositoryPort sessaoRepository;
+
+    public RegistrarVotoUseCaseImpl(SessaoRepositoryPort sessaoRepository) {
+        this.sessaoRepository = sessaoRepository;
+
+    }
+
+    @Override
+    public void executar(RegistrarVotoCommand command) {
+        SessaoVotacao sessao = sessaoRepository.buscarPorId(command.sessaoId())
+                .orElseThrow(() -> new DomainBusinessException("Sessão de votação não encontrada."));
+
+        Associado associado = new Associado(command.associadoId(), command.cpf());
+        Voto voto = new Voto(associado, command.valor());
+
+        sessao.registrarVoto(voto);
+
+        sessaoRepository.salvar(sessao);
+    }
+}
