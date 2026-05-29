@@ -21,6 +21,13 @@ public class SessaoVotacao {
         this.votos = new HashSet<>();
     }
 
+    public SessaoVotacao(String id, Pauta pauta, LocalDateTime dataFechamento, Set<Voto> votos) {
+        this.id = id;
+        this.pauta = pauta;
+        this.dataFechamento = dataFechamento;
+        this.votos = new HashSet<>(votos);
+    }
+
     public void registrarVoto(Voto voto) {
         validarSessaoAberta();
         validarVotoUnico(voto.associado());
