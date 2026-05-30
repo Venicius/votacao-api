@@ -7,7 +7,6 @@ import jakarta.persistence.Enumerated;
 
 @Embeddable
 public class VotoEntity {
-    private String associadoId;
     private String cpf;
 
     @Enumerated(EnumType.STRING)
@@ -15,13 +14,11 @@ public class VotoEntity {
 
     public VotoEntity() {}
 
-    public VotoEntity(String associadoId, String cpf, VotoValor valor) {
-        this.associadoId = associadoId;
+    public VotoEntity(String cpf, VotoValor valor) {
         this.cpf = cpf;
         this.valor = valor;
     }
 
-    public String getAssociadoId() { return associadoId; }
     public String getCpf() { return cpf; }
     public VotoValor getValor() { return valor; }
 }

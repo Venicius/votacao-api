@@ -39,7 +39,7 @@ public class SessaoRepositoryAdapter implements SessaoRepositoryPort {
 
     private SessaoEntity toEntity(SessaoVotacao dominio) {
         Set<VotoEntity> votosEntity = dominio.votos().stream()
-                .map(v -> new VotoEntity(v.associado().id(), v.associado().cpf().valor(), v.valor()))
+                .map(v -> new VotoEntity(v.associado().cpf().valor(), v.valor()))
                 .collect(Collectors.toSet());
 
         return new SessaoEntity(
@@ -55,7 +55,7 @@ public class SessaoRepositoryAdapter implements SessaoRepositoryPort {
         Pauta pauta = new Pauta(entity.getPautaId(), entity.getPautaDescricao());
 
         Set<Voto> votosDomain = entity.getVotos().stream()
-                .map(v -> new Voto(new Associado(v.getAssociadoId(), new Cpf(v.getCpf())), v.getValor()))
+                .map(v -> new Voto(new Associado(new Cpf(v.getCpf())), v.getValor()))
                 .collect(Collectors.toSet());
 
         return new SessaoVotacao(entity.getId(), pauta, entity.getDataFechamento(), votosDomain);

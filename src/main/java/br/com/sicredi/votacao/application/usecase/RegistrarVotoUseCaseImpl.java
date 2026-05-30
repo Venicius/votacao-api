@@ -22,7 +22,7 @@ public class RegistrarVotoUseCaseImpl implements RegistrarVotoUseCase {
         SessaoVotacao sessao = sessaoRepository.buscarPorId(command.sessaoId())
                 .orElseThrow(() -> new DomainBusinessException("Sessão de votação não encontrada."));
 
-        Associado associado = new Associado(command.associadoId(), command.cpf());
+        Associado associado = new Associado(command.cpf());
         Voto voto = new Voto(associado, command.valor());
 
         sessao.registrarVoto(voto);

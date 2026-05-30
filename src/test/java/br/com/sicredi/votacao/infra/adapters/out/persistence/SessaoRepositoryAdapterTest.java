@@ -30,7 +30,7 @@ class SessaoRepositoryAdapterTest {
 
         Pauta pauta = new Pauta("pauta-1", "Aprovação de emprestimo");
         SessaoVotacao sessao = new SessaoVotacao("sessao-1", pauta, 10);
-        sessao.registrarVoto(new Voto(new Associado("assoc-1", new Cpf("12345678901")), VotoValor.SIM));
+        sessao.registrarVoto(new Voto(new Associado(new Cpf("12345678901")), VotoValor.SIM));
 
         adapter.salvar(sessao);
         Optional<SessaoVotacao> sessaoRecuperada = adapter.buscarPorId("sessao-1");

@@ -1,19 +1,33 @@
 package br.com.sicredi.votacao.infra.adapters.in.web;
 
+import br.com.sicredi.votacao.application.ports.in.RegistrarVotoUseCase;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(VotacaoController.class)
+@TestPropertySource(properties = "api.base-url=http://api.teste.local/v1")
 class VotacaoControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @MockBean
+    private RegistrarVotoUseCase registrarVotoUseCase;
+
+    @Value("${api.base-url}")
+    private String baseApiUrl;
 
     @Test
     @DisplayName("Deve retornar a tela do tipo SELECAO para votar em uma sessao")
@@ -24,12 +38,13 @@ class VotacaoControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.tipo").value("SELECAO"))
                 .andExpect(jsonPath("$.titulo").value("Opções de Voto"))
-                .andExpect(jsonPath("$.itens[0].texto").value("Aprovar (SIM)"))
-                .andExpect(jsonPath("$.itens[0].url").value("http://api.sicredi.com.br/v1/sessoes/" + sessaoId + "/votos"))
+                .andExpect(jsonPath("$.itens[0].texto").value("SIM"))
+                .andExpect(jsonPath("$.itens[0].url").value(baseApiUrl + "/sessoes/" + sessaoId + "/votos"))
                 .andExpect(jsonPath("$.itens[0].body.valor").value("SIM"))
 
-                .andExpect(jsonPath("$.itens[1].texto").value("Rejeitar (NÃO)"))
-                .andExpect(jsonPath("$.itens[1].url").value("http://api.sicredi.com.br/v1/sessoes/" + sessaoId + "/votos"))
+                .andExpect(jsonPath("$.itens[1].texto").value("NÃO"))
+                .andExpect(jsonPath("$.itens[1].url").value(baseApiUrl + "/sessoes/" + sessaoId + "/votos"))
                 .andExpect(jsonPath("$.itens[1].body.valor").value("NAO"));
     }
+
 }

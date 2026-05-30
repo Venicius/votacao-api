@@ -27,12 +27,12 @@ public class VotacaoController {
 
         List<SelecaoResponse.ItemSelecao> opcoesDeVoto = List.of(
                 new SelecaoResponse.ItemSelecao(
-                        "Aprovar (SIM)",
+                        "SIM",
                         urlPostVoto,
                         Map.of("valor", "SIM")
                 ),
                 new SelecaoResponse.ItemSelecao(
-                        "Rejeitar (NÃO)",
+                        "NÃO",
                         urlPostVoto,
                         Map.of("valor", "NAO")
                 )

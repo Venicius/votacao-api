@@ -26,7 +26,7 @@ public class SessaoVotacaoTest {
     void deveRegistrarVotoComSucesso() {
         Pauta pauta = new Pauta("pauta-1", "Nova Pauta");
         SessaoVotacao sessao = new SessaoVotacao("sessao-1", pauta, 5);
-        Associado associado = new Associado("assoc-1", new Cpf("12345678901"));
+        Associado associado = new Associado(new Cpf("12345678901"));
         Voto voto = new Voto(associado, VotoValor.SIM);
 
         sessao.registrarVoto(voto);
@@ -42,7 +42,7 @@ public class SessaoVotacaoTest {
     void naoDevePermitirVotoDuplicado() {
         Pauta pauta = new Pauta("pauta-1", "Nova Pauta");
         SessaoVotacao sessao = new SessaoVotacao("sessao-1", pauta, 5);
-        Associado associado = new Associado("assoc-1", new Cpf("12345678901"));
+        Associado associado = new Associado(new Cpf("12345678901"));
 
         Voto voto1 = new Voto(associado, VotoValor.SIM);
         Voto voto2 = new Voto(associado, VotoValor.NAO);

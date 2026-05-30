@@ -5,7 +5,6 @@ import br.com.sicredi.votacao.domain.model.VotoValor;
 
 public record RegistrarVotoCommand(
         String sessaoId,
-        String associadoId,
         Cpf cpf,
         VotoValor valor
 ) {}
