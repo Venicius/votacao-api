@@ -5,18 +5,26 @@ import java.util.List;
 public record FormularioResponse(
         String tipo,
         String titulo,
-        String urlPost,
-        List<CampoFormulario> campos
+        List<Campo> items,
+        Botao botaoOk,
+        Botao botaoCancelar
 ) {
-    public FormularioResponse(String titulo, String urlPost, List<CampoFormulario> campos) {
-        this("FORMULARIO", titulo, urlPost, campos);
+    public FormularioResponse(String titulo, List<Campo> items, Botao botaoOk, Botao botaoCancelar) {
+        this("FORMULARIO", titulo, items, botaoOk, botaoCancelar);
     }
 
-    public record CampoFormulario(
-            String id,
+    public record Campo(
             String tipo,
-            String label,
-            String dica
+            String id,
+            String titulo,
+            Object valor
+    ) {
+    }
+
+    public record Botao(
+            String texto,
+            String url,
+            Object body
     ) {
     }
 }
