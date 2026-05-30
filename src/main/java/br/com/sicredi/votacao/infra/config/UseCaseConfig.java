@@ -2,6 +2,7 @@ package br.com.sicredi.votacao.infra.config;
 
 import br.com.sicredi.votacao.application.ports.out.SessaoRepositoryPort;
 import br.com.sicredi.votacao.application.usecase.AbrirSessaoUseCaseImpl;
+import br.com.sicredi.votacao.application.usecase.ObterResultadoUseCaseImpl;
 import br.com.sicredi.votacao.application.usecase.RegistrarVotoUseCaseImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,5 +18,10 @@ public class UseCaseConfig {
     @Bean
     public AbrirSessaoUseCaseImpl abrirSessaoUseCase(SessaoRepositoryPort repositoryPort) {
         return new AbrirSessaoUseCaseImpl(repositoryPort);
+    }
+
+    @Bean
+    public ObterResultadoUseCaseImpl obterResultadoUseCase(SessaoRepositoryPort repositoryPort) {
+        return new ObterResultadoUseCaseImpl(repositoryPort);
     }
 }

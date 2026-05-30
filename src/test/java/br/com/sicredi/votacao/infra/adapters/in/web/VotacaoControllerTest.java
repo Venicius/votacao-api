@@ -1,9 +1,14 @@
 package br.com.sicredi.votacao.infra.adapters.in.web;
 
 import br.com.sicredi.votacao.application.ports.in.AbrirSessaoUseCase;
+import br.com.sicredi.votacao.application.ports.in.ObterResultadoUseCase;
 import br.com.sicredi.votacao.application.ports.in.RegistrarVotoUseCase;
+import br.com.sicredi.votacao.domain.model.Associado;
+import br.com.sicredi.votacao.domain.model.Cpf;
 import br.com.sicredi.votacao.domain.model.Pauta;
 import br.com.sicredi.votacao.domain.model.SessaoVotacao;
+import br.com.sicredi.votacao.domain.model.Voto;
+import br.com.sicredi.votacao.domain.model.VotoValor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +39,9 @@ class VotacaoControllerTest {
 
     @MockBean
     private AbrirSessaoUseCase abrirSessaoUseCase;
+
+    @MockBean
+    private ObterResultadoUseCase obterResultadoUseCase;
 
     @Value("${api.base-url}")
     private String baseApiUrl;
@@ -81,6 +89,27 @@ class VotacaoControllerTest {
                         .content(jsonBody))
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location",  baseApiUrl +"/sessoes/sessao-123"));
+    }
+
+    @Test
+    @DisplayName("Deve retornar o resultado contabilizado da sessao com status APROVADA")
+    void deveRetornarResultadoDaSessao() throws Exception {
+
+        SessaoVotacao sessaoMock = new SessaoVotacao("sessao-123", new Pauta("pauta-1", "Nova Pauta"), 10);
+        sessaoMock.registrarVoto(new Voto(new Associado( new Cpf("12345678901")), VotoValor.SIM));
+        sessaoMock.registrarVoto(new Voto(new Associado( new Cpf("10987654321")), VotoValor.SIM));
+        sessaoMock.registrarVoto(new Voto(new Associado( new Cpf("11122233344")), VotoValor.NAO));
+
+        when(obterResultadoUseCase.executar("sessao-123")).thenReturn(sessaoMock);
+
+
+        mockMvc.perform(get(baseApiUrl + "/sessoes/sessao-123/resultado"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.sessaoId").value("sessao-123"))
+                .andExpect(jsonPath("$.pauta").value("Nova Pauta"))
+                .andExpect(jsonPath("$.totalSim").value(2))
+                .andExpect(jsonPath("$.totalNao").value(1))
+                .andExpect(jsonPath("$.status").value("APROVADA"));
     }
 
 }

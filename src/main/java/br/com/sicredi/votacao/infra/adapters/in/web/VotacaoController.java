@@ -2,9 +2,11 @@ package br.com.sicredi.votacao.infra.adapters.in.web;
 
 import br.com.sicredi.votacao.application.ports.in.AbrirSessaoCommand;
 import br.com.sicredi.votacao.application.ports.in.AbrirSessaoUseCase;
+import br.com.sicredi.votacao.application.ports.in.ObterResultadoUseCase;
 import br.com.sicredi.votacao.domain.model.SessaoVotacao;
 import br.com.sicredi.votacao.infra.adapters.in.web.dto.FormularioResponse;
 import br.com.sicredi.votacao.infra.adapters.in.web.dto.NovaSessaoRequest;
+import br.com.sicredi.votacao.infra.adapters.in.web.dto.ResultadoResponse;
 import br.com.sicredi.votacao.infra.adapters.in.web.dto.SelecaoResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -26,13 +28,16 @@ public class VotacaoController {
 
     private final String baseApiUrl;
     private final AbrirSessaoUseCase abrirSessaoUseCase;
+    private final ObterResultadoUseCase obterResultadoUseCase;
 
     public VotacaoController(
             @Value("${api.base-url}") String baseApiUrl,
-            AbrirSessaoUseCase abrirSessaoUseCase
+            AbrirSessaoUseCase abrirSessaoUseCase,
+            ObterResultadoUseCase obterResultadoUseCase
     ) {
         this.baseApiUrl = baseApiUrl;
         this.abrirSessaoUseCase = abrirSessaoUseCase;
+        this.obterResultadoUseCase = obterResultadoUseCase;
     }
 
     @GetMapping("/{id}/votar")
@@ -106,5 +111,21 @@ public class VotacaoController {
                 .toUri();
 
         return ResponseEntity.created(location).build();
+    }
+
+    @GetMapping("/{id}/resultado")
+    public ResponseEntity<ResultadoResponse> obterResultado(@PathVariable String id) {
+
+        SessaoVotacao sessao = obterResultadoUseCase.executar(id);
+
+        ResultadoResponse response = new ResultadoResponse(
+                sessao.id(),
+                sessao.pauta().descricao(),
+                sessao.contabilizarResultado().totalSim(),
+                sessao.contabilizarResultado().totalNao(),
+                sessao.obterStatusDaVotacao()
+        );
+
+        return ResponseEntity.ok(response);
     }
 }

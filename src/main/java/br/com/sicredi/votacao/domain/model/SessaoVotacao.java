@@ -1,6 +1,7 @@
 package br.com.sicredi.votacao.domain.model;
 
 import br.com.sicredi.votacao.domain.exception.DomainBusinessException;
+
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashSet;
@@ -57,11 +58,36 @@ public class SessaoVotacao {
         return new ResultadoVotacao(pauta.id(), votosSim, votosNao);
     }
 
-    public String id() { return id; }
-    public Pauta pauta() { return pauta; }
-    public LocalDateTime dataFechamento() { return dataFechamento; }
+    public String obterStatusDaVotacao() {
+        var resultado = contabilizarResultado();
 
-    public Set<Voto> votos() { return Collections.unmodifiableSet(votos); }
+        long sim = resultado.totalSim();
+        long nao = resultado.totalNao();
+
+        if (sim > nao) {
+            return "APROVADA";
+        } else if (nao > sim) {
+            return "REJEITADA";
+        } else {
+            return "EMPATE";
+        }
+    }
+
+    public String id() {
+        return id;
+    }
+
+    public Pauta pauta() {
+        return pauta;
+    }
+
+    public LocalDateTime dataFechamento() {
+        return dataFechamento;
+    }
+
+    public Set<Voto> votos() {
+        return Collections.unmodifiableSet(votos);
+    }
 
     public boolean isAberta() {
         return LocalDateTime.now().isBefore(dataFechamento) || LocalDateTime.now().isEqual(dataFechamento);
