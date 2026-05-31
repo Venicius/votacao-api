@@ -1,4 +1,14 @@
 api:
+  base-url: "http://localhost:8080/v1"
   cpf:
-    url: "http://mock-url-para-testes/users"
-  base-url: "http://localhost:8080"
+    real-url: ${API_CPF_REAL_URL:https://user-info.herokuapp.com/users}
+    mock-url: ${API_CPF_MOCK_URL:http://localhost:8081/users}
+
+spring:
+  cloud:
+    openfeign:
+      client:
+        config:
+          default:
+            connectTimeout: 2000
+            readTimeout: 2000

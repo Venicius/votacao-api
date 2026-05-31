@@ -1,0 +1,15 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPattern": "/users/.*"
+  },
+  "response": {
+    "status": 200,
+    "jsonBody": {
+      "status": "ABLE_TO_VOTE"
+    },
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}
