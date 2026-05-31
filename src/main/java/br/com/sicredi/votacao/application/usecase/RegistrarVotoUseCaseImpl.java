@@ -7,9 +7,12 @@ import br.com.sicredi.votacao.domain.exception.DomainBusinessException;
 import br.com.sicredi.votacao.domain.model.Associado;
 import br.com.sicredi.votacao.domain.model.SessaoVotacao;
 import br.com.sicredi.votacao.domain.model.Voto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RegistrarVotoUseCaseImpl implements RegistrarVotoUseCase {
 
+    private static final Logger log = LoggerFactory.getLogger(RegistrarVotoUseCaseImpl.class);
     private final SessaoRepositoryPort sessaoRepository;
 
     public RegistrarVotoUseCaseImpl(SessaoRepositoryPort sessaoRepository) {
@@ -19,6 +22,7 @@ public class RegistrarVotoUseCaseImpl implements RegistrarVotoUseCase {
 
     @Override
     public void executar(RegistrarVotoCommand command) {
+        log.debug("Processando intenção de voto na Sessão {}",  command.sessaoId());
         SessaoVotacao sessao = sessaoRepository.buscarPorId(command.sessaoId())
                 .orElseThrow(() -> new DomainBusinessException("Sessão de votação não encontrada."));
 
@@ -26,7 +30,7 @@ public class RegistrarVotoUseCaseImpl implements RegistrarVotoUseCase {
         Voto voto = new Voto(associado, command.valor());
 
         sessao.registrarVoto(voto);
-
+        log.info("Voto registado com sucesso para a Sessão {}", command.sessaoId());
         sessaoRepository.salvar(sessao);
     }
 }

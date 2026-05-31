@@ -8,6 +8,7 @@ import br.com.sicredi.votacao.infra.adapters.in.web.dto.FormularioResponse;
 import br.com.sicredi.votacao.infra.adapters.in.web.dto.NovaSessaoRequest;
 import br.com.sicredi.votacao.infra.adapters.in.web.dto.ResultadoResponse;
 import br.com.sicredi.votacao.infra.adapters.in.web.dto.SelecaoResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +23,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
+@Tag(name = "Sessões e Pautas", description = "Endpoints de gerenciamento de sessões")
 @RestController
 @RequestMapping("/v1/sessoes")
 public class VotacaoController {
