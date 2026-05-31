@@ -5,6 +5,7 @@ import br.com.sicredi.votacao.application.ports.in.RegistrarVotoUseCase;
 import br.com.sicredi.votacao.domain.model.Cpf;
 import br.com.sicredi.votacao.domain.model.VotoValor;
 import br.com.sicredi.votacao.infra.adapters.in.web.dto.VotoRequest;
+import br.com.sicredi.votacao.util.CpfGenerator;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,7 +31,7 @@ public class VotoController {
             @RequestBody VotoRequest request
     ) {
 
-        Cpf cpf = new Cpf("12345678901");
+        Cpf cpf = new Cpf(CpfGenerator.gerarCpfValido());
         VotoValor valor = VotoValor.valueOf(request.valor().toUpperCase());
 
         RegistrarVotoCommand command = new RegistrarVotoCommand(sessaoId, cpf, valor);
