@@ -1,6 +1,20 @@
 version: '3.8'
 
 services:
+  api:
+    build: .
+    container_name: votacao-api
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/votacao_db
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=password
+      - KAFKA_URL=kafka:9092
+    depends_on:
+      - postgres
+#      - kafka
   postgres:
     image: postgres:15-alpine
     container_name: votacao-db
