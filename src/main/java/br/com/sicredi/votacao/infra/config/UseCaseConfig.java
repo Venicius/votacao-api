@@ -1,6 +1,8 @@
 package br.com.sicredi.votacao.infra.config;
 
+import br.com.sicredi.votacao.application.ports.in.RegistrarVotoUseCase;
 import br.com.sicredi.votacao.application.ports.out.SessaoRepositoryPort;
+import br.com.sicredi.votacao.application.ports.out.ValidadorCpfPort;
 import br.com.sicredi.votacao.application.usecase.AbrirSessaoUseCaseImpl;
 import br.com.sicredi.votacao.application.usecase.ObterResultadoUseCaseImpl;
 import br.com.sicredi.votacao.application.usecase.RegistrarVotoUseCaseImpl;
@@ -11,8 +13,11 @@ import org.springframework.context.annotation.Configuration;
 public class UseCaseConfig {
 
     @Bean
-    public RegistrarVotoUseCaseImpl registrarVotoUseCase(SessaoRepositoryPort repositoryPort) {
-        return new RegistrarVotoUseCaseImpl(repositoryPort);
+    public RegistrarVotoUseCase registrarVotoUseCase(
+            SessaoRepositoryPort sessaoRepository,
+            ValidadorCpfPort validadorCpfPort) {
+
+        return new RegistrarVotoUseCaseImpl(sessaoRepository, validadorCpfPort);
     }
 
     @Bean

@@ -56,4 +56,56 @@ public class SessaoVotacaoTest {
         assertEquals("Associado já registrou um voto nesta pauta.", exception.getMessage());
         assertEquals(1, sessao.votos().size());
     }
+
+    @Test
+    @DisplayName("Deve retornar status APROVADA quando tiver mais votos SIM")
+    void deveRetornarAprovada() {
+        SessaoVotacao sessao = new SessaoVotacao("sessao-1", new Pauta("pauta-1", "Teste"), 10);
+
+        sessao.registrarVoto(new Voto(new Associado(new Cpf("11111111111")), VotoValor.SIM));
+        sessao.registrarVoto(new Voto(new Associado(new Cpf("22222222222")), VotoValor.SIM));
+        sessao.registrarVoto(new Voto(new Associado(new Cpf("33333333333")), VotoValor.NAO));
+
+        assertEquals("APROVADA", sessao.obterStatusDaVotacao());
+    }
+
+    @Test
+    @DisplayName("Deve retornar status REJEITADA quando tiver mais votos NAO")
+    void deveRetornarRejeitada() {
+        SessaoVotacao sessao = new SessaoVotacao("sessao-1", new Pauta("pauta-1", "Teste"), 10);
+
+        sessao.registrarVoto(new Voto(new Associado(new Cpf("11111111111")), VotoValor.NAO));
+        sessao.registrarVoto(new Voto(new Associado(new Cpf("22222222222")), VotoValor.NAO));
+
+        assertEquals("REJEITADA", sessao.obterStatusDaVotacao());
+    }
+
+    @Test
+    @DisplayName("Deve retornar status EMPATE quando os votos forem iguais")
+    void deveRetornarEmpate() {
+        SessaoVotacao sessao = new SessaoVotacao("sessao-1", new Pauta("pauta-1", "Teste"), 10);
+
+        sessao.registrarVoto(new Voto(new Associado(new Cpf("11111111111")), VotoValor.SIM));
+        sessao.registrarVoto(new Voto(new Associado(new Cpf("22222222222")), VotoValor.NAO));
+
+        assertEquals("EMPATE", sessao.obterStatusDaVotacao());
+    }
+
+    @Test
+    @DisplayName("Deve lançar excepção ao tentar registar voto em uma sessão expirada")
+    void deveLancarExcecaoQuandoSessaoExpirada() throws Exception {
+
+        SessaoVotacao sessaoExpirada = new SessaoVotacao("sessao-1", new Pauta("pauta-1", "Teste"), 10);
+
+        java.lang.reflect.Field campoData = SessaoVotacao.class.getDeclaredField("dataFechamento");
+        campoData.setAccessible(true);
+        campoData.set(sessaoExpirada, java.time.LocalDateTime.now().minusMinutes(5));
+
+        Voto votoAtrasado = new Voto(new Associado(new Cpf("11111111111")), VotoValor.SIM);
+
+        DomainBusinessException exception = assertThrows(DomainBusinessException.class,
+                () -> sessaoExpirada.registrarVoto(votoAtrasado));
+
+        assertEquals("A sessão de votação já está encerrada.", exception.getMessage());
+    }
 }
