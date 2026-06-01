@@ -1,13 +1,11 @@
 package br.com.sicredi.votacao.infra.adapters.out.persistence.entity;
 
-import jakarta.persistence.CollectionTable;
-import jakarta.persistence.ElementCollection;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -24,23 +22,16 @@ public class SessaoEntity {
     private String pautaDescricao;
     private LocalDateTime dataFechamento;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(
-            name = "votos",
-            joinColumns = @JoinColumn(name = "sessao_id"),
-            uniqueConstraints = @UniqueConstraint(name = "uk_votos_sessao_cpf", columnNames = {"sessao_id", "cpf"})
-    )
+    @OneToMany(mappedBy = "sessao", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<VotoEntity> votos = new HashSet<>();
-
 
     public SessaoEntity() {}
 
-    public SessaoEntity(String id, String pautaId, String pautaDescricao, LocalDateTime dataFechamento, Set<VotoEntity> votos) {
+    public SessaoEntity(String id, String pautaId, String pautaDescricao, LocalDateTime dataFechamento) {
         this.id = id;
         this.pautaId = pautaId;
         this.pautaDescricao = pautaDescricao;
         this.dataFechamento = dataFechamento;
-        this.votos = votos;
     }
 
     public String getId() { return id; }

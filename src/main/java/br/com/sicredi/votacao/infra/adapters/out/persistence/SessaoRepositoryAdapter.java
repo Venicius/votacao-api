@@ -1,6 +1,5 @@
 package br.com.sicredi.votacao.infra.adapters.out.persistence;
 
-
 import br.com.sicredi.votacao.application.ports.out.SessaoRepositoryPort;
 import br.com.sicredi.votacao.domain.exception.DomainBusinessException;
 import br.com.sicredi.votacao.domain.model.Associado;
@@ -22,20 +21,22 @@ import java.util.stream.Collectors;
 public class SessaoRepositoryAdapter implements SessaoRepositoryPort {
 
     private final SessaoRepository repository;
+    private final VotoJpaRepository votoRepository;
 
-    public SessaoRepositoryAdapter(SessaoRepository repository) {
+    public SessaoRepositoryAdapter(SessaoRepository repository, VotoJpaRepository votoRepository) {
         this.repository = repository;
+        this.votoRepository = votoRepository;
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<SessaoVotacao> buscarPorId(String id) {
         return repository.findById(id).map(this::toDomain);
     }
 
     @Override
     public SessaoVotacao salvar(SessaoVotacao sessao) {
-        SessaoEntity entity = toEntity(sessao);
-        repository.save(entity);
+        repository.save(toEntity(sessao));
         return sessao;
     }
 
@@ -50,25 +51,19 @@ public class SessaoRepositoryAdapter implements SessaoRepositoryPort {
         }
 
         String cpf = voto.associado().cpf().valor();
-        boolean jaVotou = sessao.getVotos().stream().anyMatch(v -> v.getCpf().equals(cpf));
-        if (jaVotou) {
+        if (votoRepository.existsBySessaoIdAndCpf(sessaoId, cpf)) {
             throw new DomainBusinessException("Associado já registrou um voto nesta pauta.");
         }
 
-        sessao.getVotos().add(new VotoEntity(cpf, voto.valor()));
+        votoRepository.save(new VotoEntity(sessao, cpf, voto.valor()));
     }
 
     private SessaoEntity toEntity(SessaoVotacao dominio) {
-        Set<VotoEntity> votosEntity = dominio.votos().stream()
-                .map(v -> new VotoEntity(v.associado().cpf().valor(), v.valor()))
-                .collect(Collectors.toSet());
-
         return new SessaoEntity(
                 dominio.id(),
                 dominio.pauta().id(),
                 dominio.pauta().descricao(),
-                dominio.dataFechamento(),
-                votosEntity
+                dominio.dataFechamento()
         );
     }
 
