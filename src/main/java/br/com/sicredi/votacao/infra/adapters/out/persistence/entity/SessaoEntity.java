@@ -7,6 +7,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -24,7 +25,11 @@ public class SessaoEntity {
     private LocalDateTime dataFechamento;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "votos", joinColumns = @JoinColumn(name = "sessao_id"))
+    @CollectionTable(
+            name = "votos",
+            joinColumns = @JoinColumn(name = "sessao_id"),
+            uniqueConstraints = @UniqueConstraint(name = "uk_votos_sessao_cpf", columnNames = {"sessao_id", "cpf"})
+    )
     private Set<VotoEntity> votos = new HashSet<>();
 
 

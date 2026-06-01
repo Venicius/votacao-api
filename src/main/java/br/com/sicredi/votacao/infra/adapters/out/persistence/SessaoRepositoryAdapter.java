@@ -2,6 +2,7 @@ package br.com.sicredi.votacao.infra.adapters.out.persistence;
 
 
 import br.com.sicredi.votacao.application.ports.out.SessaoRepositoryPort;
+import br.com.sicredi.votacao.domain.exception.DomainBusinessException;
 import br.com.sicredi.votacao.domain.model.Associado;
 import br.com.sicredi.votacao.domain.model.Cpf;
 import br.com.sicredi.votacao.domain.model.Pauta;
@@ -10,7 +11,9 @@ import br.com.sicredi.votacao.domain.model.Voto;
 import br.com.sicredi.votacao.infra.adapters.out.persistence.entity.SessaoEntity;
 import br.com.sicredi.votacao.infra.adapters.out.persistence.entity.VotoEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -37,10 +40,23 @@ public class SessaoRepositoryAdapter implements SessaoRepositoryPort {
     }
 
     @Override
-    public boolean existeVotoPorSessaoECpf(String sessaoId, String cpf) {
-        return repository.existsBySessaoIdAndCpf(sessaoId, cpf);
-    }
+    @Transactional
+    public void adicionarVoto(String sessaoId, Voto voto) {
+        SessaoEntity sessao = repository.findByIdForUpdate(sessaoId)
+                .orElseThrow(() -> new DomainBusinessException("Sessão de votação não encontrada."));
 
+        if (LocalDateTime.now().isAfter(sessao.getDataFechamento())) {
+            throw new DomainBusinessException("A sessão de votação já está encerrada.");
+        }
+
+        String cpf = voto.associado().cpf().valor();
+        boolean jaVotou = sessao.getVotos().stream().anyMatch(v -> v.getCpf().equals(cpf));
+        if (jaVotou) {
+            throw new DomainBusinessException("Associado já registrou um voto nesta pauta.");
+        }
+
+        sessao.getVotos().add(new VotoEntity(cpf, voto.valor()));
+    }
 
     private SessaoEntity toEntity(SessaoVotacao dominio) {
         Set<VotoEntity> votosEntity = dominio.votos().stream()
