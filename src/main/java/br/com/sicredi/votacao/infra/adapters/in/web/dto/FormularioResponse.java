@@ -5,7 +5,7 @@ import java.util.List;
 public record FormularioResponse(
         String tipo,
         String titulo,
-        List<Campo> items,
+        List<Campo> itens,
         Botao botaoOk,
         Botao botaoCancelar
 ) {

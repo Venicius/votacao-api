@@ -82,7 +82,7 @@ public class VotacaoController {
         FormularioResponse.Botao botaoOk = new FormularioResponse.Botao(
                 "Abrir Sessão",
                 urlPostSessao,
-                Map.of()
+                Map.of("descricaoPauta", "", "duracaoMinutos", 1)
         );
 
         FormularioResponse.Botao botaoCancelar = new FormularioResponse.Botao(

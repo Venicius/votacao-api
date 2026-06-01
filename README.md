@@ -192,7 +192,7 @@ POST /v1/sessoes
 Content-Type: application/json
 
 {
-  "descricao": "Aprovação do orçamento anual",
+  "descricaoPauta": "Aprovação do orçamento anual",
   "duracaoMinutos": 5
 }
 ```
@@ -220,9 +220,11 @@ GET /v1/sessoes/{id}/resultado
 
 ```json
 {
-  "pautaId": "abc-123",
+  "sessaoId": "abc-123",
+  "pauta": "Aprovação do orçamento anual",
   "totalSim": 10,
-  "totalNao": 3
+  "totalNao": 3,
+  "status": "APROVADA"
 }
 ```
 
@@ -236,6 +238,7 @@ GET /v1/sessoes/{id}/resultado
 | `SPRING_DATASOURCE_URL` | `jdbc:postgresql://localhost:5432/votacao_db` | URL do banco |
 | `SPRING_DATASOURCE_USERNAME` | `postgres` | Usuário do banco |
 | `SPRING_DATASOURCE_PASSWORD` | `password` | Senha do banco |
+| `API_BASE_URL` | `http://localhost:8080/v1` | Base das URLs retornadas nas respostas SDUI |
 | `API_CPF_REAL_URL` | `https://user-info.herokuapp.com/users` | URL da API de validação de CPF |
 | `API_CPF_MOCK_URL` | `http://localhost:8081/users` | URL do WireMock (mock local) |
 
