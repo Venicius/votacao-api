@@ -7,7 +7,7 @@ export const options = {
 };
 
 export default function () {
-    const sessaoId = "ea5a7bf6-eef0-4c8c-8b21-2bea2658d700" //mudar após criar sessao
+    const sessaoId = "bf1dadb1-8e9d-4477-915e-dcc11852a6f7" //mudar após criar sessao
     const url = `http://localhost:8080/v1/sessoes/${sessaoId}/votos`;
 
     const payload = JSON.stringify({
