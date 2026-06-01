@@ -3,6 +3,7 @@ package br.com.sicredi.votacao.infra.adapters.in.web;
 import br.com.sicredi.votacao.application.ports.in.AbrirSessaoCommand;
 import br.com.sicredi.votacao.application.ports.in.AbrirSessaoUseCase;
 import br.com.sicredi.votacao.application.ports.in.ObterResultadoUseCase;
+import br.com.sicredi.votacao.domain.model.ResultadoVotacao;
 import br.com.sicredi.votacao.domain.model.SessaoVotacao;
 import br.com.sicredi.votacao.infra.adapters.in.web.dto.FormularioResponse;
 import br.com.sicredi.votacao.infra.adapters.in.web.dto.NovaSessaoRequest;
@@ -119,12 +120,13 @@ public class VotacaoController {
     public ResponseEntity<ResultadoResponse> obterResultado(@PathVariable String id) {
 
         SessaoVotacao sessao = obterResultadoUseCase.executar(id);
+        ResultadoVotacao resultado = sessao.contabilizarResultado();
 
         ResultadoResponse response = new ResultadoResponse(
                 sessao.id(),
                 sessao.pauta().descricao(),
-                sessao.contabilizarResultado().totalSim(),
-                sessao.contabilizarResultado().totalNao(),
+                resultado.totalSim(),
+                resultado.totalNao(),
                 sessao.obterStatusDaVotacao()
         );
 
