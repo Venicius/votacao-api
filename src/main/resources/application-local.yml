@@ -2,11 +2,25 @@ server:
   port: 8080
 
 spring:
+  cloud:
+    openfeign:
+      httpclient:
+        hc5:
+          enabled: true
+      client:
+        config:
+          default:
+            connectTimeout: 500
+            readTimeout: 500
   datasource:
     url: jdbc:postgresql://localhost:5432/votacao_db
     username: postgres
     password: password
     driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 50
+      minimum-idle: 10
+      connection-timeout: 3000
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:

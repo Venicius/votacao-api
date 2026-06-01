@@ -38,26 +38,6 @@ public class SessaoVotacaoTest {
     }
 
     @Test
-    @DisplayName("Não deve permitir que o mesmo associado vote duas vezes na mesma pauta")
-    void naoDevePermitirVotoDuplicado() {
-        Pauta pauta = new Pauta("pauta-1", "Nova Pauta");
-        SessaoVotacao sessao = new SessaoVotacao("sessao-1", pauta, 5);
-        Associado associado = new Associado(new Cpf("12345678901"));
-
-        Voto voto1 = new Voto(associado, VotoValor.SIM);
-        Voto voto2 = new Voto(associado, VotoValor.NAO);
-
-        sessao.registrarVoto(voto1);
-
-        DomainBusinessException exception = assertThrows(DomainBusinessException.class, () -> {
-            sessao.registrarVoto(voto2);
-        });
-
-        assertEquals("Associado já registrou um voto nesta pauta.", exception.getMessage());
-        assertEquals(1, sessao.votos().size());
-    }
-
-    @Test
     @DisplayName("Deve retornar status APROVADA quando tiver mais votos SIM")
     void deveRetornarAprovada() {
         SessaoVotacao sessao = new SessaoVotacao("sessao-1", new Pauta("pauta-1", "Teste"), 10);

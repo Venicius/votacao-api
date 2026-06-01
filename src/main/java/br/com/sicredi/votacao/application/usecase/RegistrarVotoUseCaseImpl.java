@@ -25,6 +25,11 @@ public class RegistrarVotoUseCaseImpl implements RegistrarVotoUseCase {
     @Override
     public void executar(RegistrarVotoCommand command) {
         log.debug("Processando intenção de voto na Sessão {}",  command.sessaoId());
+
+        if (sessaoRepository.existeVotoPorSessaoECpf(command.sessaoId(), command.cpf().valor())) {
+            throw new DomainBusinessException("Associado já registrou um voto nesta pauta.");
+        }
+
         if (!validadorCpfPort.podeVotar(command.cpf().valor())) {
             throw new DomainBusinessException("Associado não está apto para votar (Validação CPF).");
         }

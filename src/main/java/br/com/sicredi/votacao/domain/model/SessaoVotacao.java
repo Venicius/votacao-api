@@ -31,7 +31,6 @@ public class SessaoVotacao {
 
     public void registrarVoto(Voto voto) {
         validarSessaoAberta();
-        validarVotoUnico(voto.associado());
 
         this.votos.add(voto);
     }
@@ -39,15 +38,6 @@ public class SessaoVotacao {
     private void validarSessaoAberta() {
         if (LocalDateTime.now().isAfter(dataFechamento)) {
             throw new DomainBusinessException("A sessão de votação já está encerrada.");
-        }
-    }
-
-    private void validarVotoUnico(Associado associado) {
-        boolean jaVotou = votos.stream()
-                .anyMatch(v -> v.associado().equals(associado));
-
-        if (jaVotou) {
-            throw new DomainBusinessException("Associado já registrou um voto nesta pauta.");
         }
     }
 

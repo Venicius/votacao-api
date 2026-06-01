@@ -36,6 +36,11 @@ public class SessaoRepositoryAdapter implements SessaoRepositoryPort {
         return sessao;
     }
 
+    @Override
+    public boolean existeVotoPorSessaoECpf(String sessaoId, String cpf) {
+        return repository.existsBySessaoIdAndCpf(sessaoId, cpf);
+    }
+
 
     private SessaoEntity toEntity(SessaoVotacao dominio) {
         Set<VotoEntity> votosEntity = dominio.votos().stream()

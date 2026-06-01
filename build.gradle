@@ -30,6 +30,8 @@ dependencies {
     testImplementation 'org.springframework.kafka:spring-kafka-test'
 
     testRuntimeOnly 'com.h2database:h2'
+
+    implementation 'io.github.openfeign:feign-hc5'
 }
 
 tasks.named('test') {
