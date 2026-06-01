@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -66,5 +67,23 @@ class RegistrarVotoUseCaseImplTest {
         assertEquals("Associado não está apto para votar (Validação CPF).", exception.getMessage());
 
         verify(sessaoRepository, never()).salvar(any());
+    }
+
+    @Test
+    @DisplayName("Deve barrar o voto se o associado já tiver votado na pauta")
+    void deveLancarExcecaoQuandoAssociadoJaVotou() {
+        String sessaoId = "sessao-123";
+        String cpf = "12345678901";
+
+        RegistrarVotoCommand command = new RegistrarVotoCommand(sessaoId, new Cpf(cpf), VotoValor.SIM);
+
+        when(sessaoRepository.existeVotoPorSessaoECpf(sessaoId, cpf)).thenReturn(true);
+
+        DomainBusinessException exception = assertThrows(DomainBusinessException.class,
+                () -> registrarVotoUseCase.executar(command));
+
+        assertEquals("Associado já registrou um voto nesta pauta.", exception.getMessage());
+
+        verify(sessaoRepository, never()).buscarPorId(anyString());
     }
 }
