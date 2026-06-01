@@ -2,9 +2,8 @@ server:
   port: 8080
 
 spring:
-  spring:
-    cloud:
-      openfeign:
+  cloud:
+    openfeign:
         httpclient:
           hc5:
             enabled: true

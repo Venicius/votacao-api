@@ -58,24 +58,12 @@ Sobe tudo com um único comando: API, PostgreSQL e WireMock.
 docker compose up --build
 ```
 
-Aguarde a mensagem `Started VotacaoApiApplication` nos logs. A API estará disponível em `http://localhost:8080`.
-
 | Serviço | Endereço |
 |---|---|
 | API | `http://localhost:8080` |
 | Swagger UI | `http://localhost:8080/swagger-ui.html` |
 | PostgreSQL | `localhost:5432` |
 | WireMock (mock CPF) | `http://localhost:8081` |
-
-Para parar:
-
-```bash
-# Só parar os containers
-docker compose down
-
-# Parar e apagar o banco de dados
-docker compose down -v
-```
 
 ---
 
@@ -97,8 +85,6 @@ docker compose down -v
 4. **Rode a aplicação** com `Shift+F10` ou pelo botão de play
 
 A API estará disponível em `http://localhost:8080`.
-
-> **Dica:** Com o perfil `local`, o `show-sql=true` está habilitado — você verá as queries no console do IntelliJ, o que ajuda bastante durante o desenvolvimento.
 
 ---
 
@@ -176,14 +162,6 @@ docker run --rm -i --network=host grafana/k6 run - < performance-test/load-test.
 docker run --rm -i grafana/k6 run - < performance-test/load-test.js
 ```
 
-> No Linux, o `--network=host` é necessário para o container conseguir acessar o `localhost:8080` do host. No Mac e Windows com Docker Desktop isso não é necessário porque o Docker já faz o roteamento automaticamente (use `host.docker.internal` no lugar de `localhost` no script se tiver problemas).
-
-### Rodando com k6 instalado localmente
-
-```bash
-k6 run performance-test/load-test.js
-```
-
 ---
 
 ## Endpoints da API
@@ -194,7 +172,7 @@ A API está versionada sob o prefixo `/v1`. A documentação interativa completa
 
 | Método | Endpoint | Descrição |
 |---|---|---|
-| `GET` | `/v1/sessoes` | Retorna tela SDUI para criar nova sessão |
+| `GET` | `/v1/sessoes/nova` | Retorna tela SDUI para criar nova sessão |
 | `POST` | `/v1/sessoes` | Cria pauta e abre sessão de votação |
 | `GET` | `/v1/sessoes/{id}/resultado` | Retorna resultado da votação |
 
@@ -202,7 +180,7 @@ A API está versionada sob o prefixo `/v1`. A documentação interativa completa
 
 | Método | Endpoint | Descrição |
 |---|---|---|
-| `GET` | `/v1/sessoes/{sessaoId}/votos` | Retorna tela SDUI de votação |
+| `GET` | `/v1/sessoes/{id}/votar` | Retorna tela SDUI de votação |
 | `POST` | `/v1/sessoes/{sessaoId}/votos` | Registra voto do associado |
 
 ### Exemplos
@@ -228,12 +206,11 @@ POST /v1/sessoes/{sessaoId}/votos
 Content-Type: application/json
 
 {
-  "cpf": "12345678901",
   "valor": "SIM"
 }
 ```
 
-Valores aceitos: `SIM` ou `NAO`. Cada CPF só pode votar uma vez por sessão.
+Valores aceitos: `SIM` ou `NAO`. O CPF do associado é gerado pelo servidor — cada chamada representa um associado único.
 
 **Consultar resultado:**
 
